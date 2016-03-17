@@ -3,7 +3,7 @@ title: "ShuyaKongFinal"
 output: html_document
 ---
 
-  ```{r, echo=FALSE, warning=FALSE,message=FALSE}
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
 print("Shuya Kong 1505077")
 library(nycflights13)
 library(dplyr)
@@ -83,19 +83,10 @@ flights_visib<- group_by(flights_weather, visib) %>%
 ggplot(flights_visib, aes(visib, avg_dep_delay)) +
   geom_point()
 
-
-
-flights_can <- group_by(flights_weather, canceled) %>% 
-  summarise(avg_dep_delay = mean(dep_delay)) %>% 
-  collect()
-
-ggplot(flights_can, aes(factor(canceled),avg_dep_delay)) +
-  geom_bar(stat = "identity", fill = "blue", width = 0.2)
-
 ```
 
 
-when wind speed is very low, precip is between 0 and 0.3, pressure is between 1000 and 1030,  departure delays tend to happen.
+when wind speed and wind gust are very low, precip is between 0 and 0.3, pressure is between 1000 and 1030,  departure delays tend to happen.
 
 
 
@@ -231,4 +222,4 @@ The plot shows that planes with 4 Cycle engine have the longest departure delays
 
 
 Conclusion:
-in June, July, and December, around the 8th, 10th, and 22rd days, in the middle of the day or at night, when wind speed is very low, precip is between 0 and 0.3, pressure is between 1000 and 1030, at airports except LEX and PSP, with planes in models A320-214 and 767-432ER, having very small amount of seats (maybe private planes), manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, and engined with 4 Cycle, we except delays and cancellations to occur in New York City in 2013. 
+in June, July, and December, around the 8th, 10th, and 22rd days, in the middle of the day or at night, when wind speed or wind gust are very low, precip is between 0 and 0.3, pressure is between 1000 and 1030, at airports except LEX and PSP, with planes in models A320-214 and 767-432ER, having very small amount of seats (maybe private planes), manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, and engined with 4 Cycle, we except delays and cancellations to occur in New York City in 2013. 
