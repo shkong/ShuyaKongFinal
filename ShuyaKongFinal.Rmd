@@ -1,0 +1,233 @@
+---
+title: "ShuyaKongFinal"
+output: html_document
+---
+
+  ```{r, echo=FALSE, warning=FALSE,message=FALSE}
+library(nycflights13)
+library(dplyr)
+library(ggplot2)
+flights_sqlite <- tbl(nycflights13_sqlite(), "flights")
+
+```
+
+** a)£º weather **
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+flights_weather <- flights_sqlite %>% 
+  filter(dep_delay > 60) %>%
+  left_join(weather, by = "origin", copy = TRUE) %>%
+  mutate(canceled = is.na(arr_time))
+
+flights_weather <- as.data.frame(flights_weather)
+
+flights_temp <- group_by(flights_weather, temp) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_temp, aes(temp, avg_dep_delay)) +
+  geom_point()
+
+
+flights_dewp<- group_by(flights_weather, dewp) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_dewp, aes(dewp, avg_dep_delay)) +
+  geom_point()
+
+
+flights_humid<- group_by(flights_weather, humid) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_humid, aes(humid, avg_dep_delay)) +
+  geom_point()
+
+
+flights_dir<- group_by(flights_weather, wind_dir) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_dir, aes(wind_dir, avg_dep_delay)) +
+  geom_point()
+
+
+flights_speed<- group_by(flights_weather, wind_speed) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_speed, aes(wind_speed, avg_dep_delay)) +
+  geom_point()
+
+
+flights_gust<- group_by(flights_weather, wind_gust) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_gust, aes(wind_gust, avg_dep_delay)) +
+  geom_point()
+
+
+flights_precip <- group_by(flights_weather, precip) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_precip, aes(precip, avg_dep_delay)) +
+  geom_point()
+
+
+flights_pressure <- group_by(flights_weather, pressure) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_pressure, aes(pressure, avg_dep_delay)) +
+  geom_point()
+
+flights_visib<- group_by(flights_weather, visib) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_visib, aes(visib, avg_dep_delay)) +
+  geom_point()
+
+
+
+flights_can <- group_by(flights_weather, canceled) %>% 
+  summarise(avg_dep_delay = mean(dep_delay)) %>% 
+  collect()
+
+ggplot(flights_can, aes(factor(canceled),avg_dep_delay)) +
+  geom_bar(stat = "identity", fill = "blue", width = 0.2)
+
+```
+
+
+when wind speed is very low, precip is between 0 and 0.3, pressure is between 1000 and 1030,  departure delays tend to happen.
+
+
+
+** b) time **
+
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE}
+
+flights_month <- as.data.frame(flights_sqlite %>%
+  group_by(month) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+)
+
+ggplot(flights_month, aes(factor(month),avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue")
+
+
+
+flights_day <- as.data.frame(flights_sqlite %>%
+  group_by(day) %>% 
+  summarise(avg_dep_delay = mean(dep_delay))
+)
+
+ggplot(flights_day, aes(day, avg_dep_delay)) + 
+  geom_line()
+
+
+
+flights_hour <- as.data.frame(flights_sqlite %>%
+  group_by(hour) %>% 
+  summarise(avg_dep_delay = mean(dep_delay))
+)
+
+ggplot(flights_hour, aes(hour, avg_dep_delay, na.rm=T)) + 
+  geom_bar(stat="identity", fill = "indianred")
+
+```
+
+
+Months 6 , 7 and 12 have the longest departure delay. Days 8, 10, and 22 have the longest departure delay even though the line goes up and down dramatically in a month. And in the middle of the day and at night, long departure delay tends to occur.  
+
+
+
+** c) airport destination **
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+flights_dest <- group_by(flights_sqlite, dest) %>%
+  mutate(canceled = is.na(arr_time)) %>% 
+  summarise(avg_dep_delay = mean(dep_delay), 
+            count = n(), 
+            sum_can = sum(canceled)
+            )
+
+flights_dest <- as.data.frame(flights_dest)
+
+flights_dest$c <- flights_dest$sum_can/flights_dest$count
+
+ggplot(flights_dest, aes(dest,avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+ggplot(flights_dest, aes(dest,c)) + 
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+```
+
+The first plot shows that all airport destinations have departure delays except two of them, LEX and PSP that depart early. However, in the second plot we can see that LEX is most likely to cancel flights while the rest of the destinations have relatively low probability to cancel flights.  
+
+
+** d) characteristics of the plane **
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+flights_planes <- flights_sqlite %>% 
+  left_join(planes, by = "tailnum", copy = TRUE)
+
+flights_planes <- as.data.frame(flights_planes)
+
+flights_manuf <- group_by(flights_planes, manufacturer) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_manuf, aes(manufacturer, avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+flights_model <- group_by(flights_planes, model) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_model, aes(model, avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+
+flights_seats <- group_by(flights_planes, seats) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+ggplot(flights_seats, aes(seats, avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+```
+
+From the plot we can tell that planes in models A320-214 and 767-432ER, manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, and that have small amount of seats have the longest delarture delays.
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+flights_engines <- group_by(flights_planes, engines) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+
+flights_engines <- as.data.frame(flights_engines)
+
+ggplot(flights_engines, aes(engines,avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+```
+
+Planes that have 2 engines are most likely to delay departures and those that have 3 are most likely to depart early.  
+
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE}
+flights_engine <- group_by(flights_planes, engine) %>%
+  summarise(avg_dep_delay = mean(dep_delay))
+flights_engine <- as.data.frame(flights_engine)
+
+ggplot(flights_engine, aes(engine,avg_dep_delay)) +
+  geom_bar(stat="identity", fill = "blue") +
+  theme(axis.text.x=element_text(angle = 90))
+
+```
+
+The plot shows that planes with 4 Cycle engine have the longest departure delays, and thus are most likely to depart late. And planes with the other engines have relatively low likelihood to be late. 
+
+
+Conclusion:
+in June, July, and December, around the 8th, 10th, and 22rd days, in the middle of the day or at night, when wind speed is very low, precip is between 0 and 0.3, pressure is between 1000 and 1030, at airports except LEX and PSP, with planes in models A320-214 and 767-432ER, having very small amount of seats (maybe private planes), manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, and engined with 4 Cycle, we except delays and cancellations to occur in New York City in 2013. 
