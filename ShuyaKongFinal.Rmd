@@ -222,4 +222,4 @@ The plot shows that planes with 4 Cycle engine have the longest departure delays
 
 
 Conclusion:
-in June, July, and December, around the 8th, 10th, and 22rd days, in the middle of the day or at night, when wind speed or wind gust are very low, precip is between 0 and 0.3, pressure is between 1000 and 1030, at airports except LEX and PSP, with planes in models A320-214 and 767-432ER, having very small amount of seats (maybe private planes), manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, and engined with 4 Cycle, we except delays and cancellations to occur in New York City in 2013. 
+in June, July, and December, around the 8th, 10th, and 22rd days, in the middle of the day or at night, when wind speed or wind gust are very low, precip is between 0 and 0.3, pressure is between 1000 and 1030, at airports except LEX and PSP, with planes in models A320-214 and 767-432ER, having very small amount of seats (maybe private planes), manufactured by AGUSTA SPA, AVIAT AIRCRAFT INC, and FRIEDEMANN JON, having 2 engines, and engined with 4 Cycle, we except delays and cancellations to occur in New York City in 2013. 
