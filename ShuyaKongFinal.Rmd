@@ -11,7 +11,7 @@ flights_sqlite <- tbl(nycflights13_sqlite(), "flights")
 
 ```
 
-** a)£º weather **
+** a) weather **
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
 flights_weather <- flights_sqlite %>% 
